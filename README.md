@@ -1,6 +1,5 @@
-# Quantum Circuit Builder (QMC)
-
-This project is the **prototype backend** for a web application where students can practice building quantum circuits.
+# Quantum Circuit Builder (QMCB)
+This project is the **prototype backend** for a web application that allows users to build quantum circuits from scratch, test output results, and compare the results via a truth table with the target circuit output results.
 
 ## Prerequisites
 

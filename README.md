@@ -54,6 +54,7 @@ The application uses the following environment variables:
 ### API Endpoints
 
 1. POST /simulate: Simulates a quantum circuit built from gates provided by the frontend and returns a truth table
+1. POST /simulate: Simulates a quantum circuit built from gates provided by the frontend and returns a truth table
 
 ## Example Request: 
 {

@@ -12,8 +12,8 @@ This project is the **prototype backend** for a web application that allows user
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/marissasinghh/qmc-backend.git
-cd qmc-backend
+git clone https://github.com/marissasinghh/qmcb.git
+cd qmcb
 ```
 
 2. Initialize the project (creates virtual environment, installs dependencies, and sets up your environment variables):
@@ -28,7 +28,7 @@ make run
 
 ### Development Workflow
 
-For daily development, you typically need to:
+For daily development, you need to:
 
 1. Activate the virtual environment:
 ```bash
@@ -53,7 +53,7 @@ The application uses the following environment variables:
 
 ### API Endpoints
 
-1. POST /simulate: Simulates a quantum circuit build from gates provided by the frontend and returns a truth table
+1. POST /simulate: Simulates a quantum circuit built from gates provided by the frontend and returns a truth table
 
 ## Example Request: 
 {
@@ -65,12 +65,35 @@ The application uses the following environment variables:
 
 ## Example Response: 
 {
-  "truth_table": {
-    "00": "00",
-    "01": "10",
-    "10": "01",
-    "11": "11"
-  }
+    "message": "Successfully simulated trial and target unitaries.",
+    "trial_truth_table": {
+        "input": [
+            "00",
+            "01",
+            "10",
+            "11"
+        ],
+        "output": [
+            "00",
+            "10",
+            "01",
+            "11"
+        ]
+    },
+    "target_truth_table": {
+        "input": [
+            "00",
+            "01",
+            "10",
+            "11"
+        ],
+        "output": [
+            "00",
+            "10",
+            "01",
+            "11"
+        ]
+    }
 }
 
 
@@ -87,17 +110,31 @@ The application uses the following environment variables:
 ├── app/
 │   ├── __init__.py
 │   ├── config.py
+│   ├── main.py
 │   ├── api/
 │   │   ├── __init__.py
 │   │   └── simulate.py
 │   ├── controllers/
-│   │   └── simulate_controller.py
+│   │   └── simulate.py
+│   ├── dto/
+│   │   ├── response_dto.py
+│   │   ├── truth_table.py
+│   │   └── unitary.py
 │   ├── repositories/
-│   ├── utils/
-│   └── dto/
-├── requirements.txt
+│   │   ├── construct_circuit.py
+│   │   ├── quantum_gates.py
+│   │   ├── simulate_circuit.py
+│   │   └── target_unitaries.py
+│   └── utils/
+│       ├── constants.py
+│       ├── helpers.py
+│       ├── response_builder.py
+│       ├── target_library.py
+│       └── types.py
+├── venv/
 ├── .env
-├── main.py
-└── README.md
-
+├── .gitignore
+├── Makefile
+├── README.md
+└── requirements.txt
 ```

@@ -3,8 +3,8 @@ from dataclasses import dataclass, asdict
 
 @dataclass
 class TruthTableDTO:
-    input: list[int]
-    output: list[int]
+    input: list[str]
+    output: list[str]
 
     def to_dict(self):
         return asdict(self)

@@ -28,7 +28,7 @@ class SimulateCircuitRepository:
         """
         state_str = list_to_joint_string(state)
         truth_table.input.append(state_str)
-        truth_table.output.append(output)
+        truth_table.output.append(str(output))
 
         return None
 

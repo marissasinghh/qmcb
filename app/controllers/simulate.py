@@ -3,12 +3,13 @@ from app.repositories.simulate_circuit import SimulateCircuitRepository
 from app.utils.helpers import initialize_qubit_sequence
 from app.dto.unitary import UnitaryDTO
 from app.dto.truth_table import TruthTableDTO
+from typing import Any
 import logging
 
 
 def simulate_unitaries(
     trial_dto: UnitaryDTO, target_dto: UnitaryDTO
-) -> tuple[TruthTableDTO, TruthTableDTO]:
+) -> tuple[dict[str, Any], int]:
 
     # Initializing qubits and starting basis states
     qubits = initialize_qubit_sequence(trial_dto.number_of_qubits)

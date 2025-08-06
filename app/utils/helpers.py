@@ -10,7 +10,7 @@ def initialize_qubit_sequence(number_of_qubits: int) -> list[Qubit]:
     Creates a linear sequence of n qubits and returns list of callable
     qubits in sequential order.
     """
-    qubit_sequence = []
+    qubit_sequence: list[Qubit] = []
 
     for n in range(number_of_qubits):
         qubit_sequence.append(cirq.LineQubit(n))
@@ -32,8 +32,8 @@ def get_target_gates(target_name: str) -> list[str]:
     if target_name not in TARGET_LIBRARY:
         raise ValueError(f"Target gate {target_name} not found in library.")
 
-    info = TARGET_LIBRARY[target_name]
-    gate_list = info[TargetLibraryField.GATES]
+    target_key = TARGET_LIBRARY[target_name]
+    gate_list = target_key[TargetLibraryField.GATES.value]
 
     return gate_list
 
@@ -46,7 +46,7 @@ def get_qubit_order(target_name: str) -> list[list[int]]:
         raise ValueError(f"Target gate {target_name} not found in library.")
 
     info = TARGET_LIBRARY[target_name]
-    qubit_order = info[TargetLibraryField.QUBIT_ORDER]
+    qubit_order = info[TargetLibraryField.QUBIT_ORDER.value]
 
     return qubit_order
 

@@ -36,7 +36,7 @@ class ConstructCircuitRepository:
 
     @staticmethod
     def build_circuit_base(
-        gates: list[Gate], qubit_order: list[list[int]], qubits: list[Qubit]
+        gates: list[str], qubit_order: list[list[int]], qubits: list[Qubit]
     ) -> Circuit:
         """
         Creates a circuit based on the order of gate operations for a specified
@@ -76,7 +76,7 @@ class ConstructCircuitRepository:
     @staticmethod
     def construct_unitary_circuit(
         basis_state: list[int],
-        gates: list[Gate],
+        gates: list[str],
         qubit_order: list[list[int]],
         qubits: list[Qubit],
     ) -> Circuit:

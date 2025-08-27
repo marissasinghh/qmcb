@@ -1,0 +1,48 @@
+from flask_restx import Namespace, Resource
+from flask import request
+from app.controllers.simulate import simulate_unitaries
+from app.utils.helpers import get_qubit_order, get_target_gates
+from app.utils.response_builder import ResponseBuilder
+from app.dto.response_dto import ResponseDTO
+from app.dto.unitary import UnitaryDTO
+import logging
+
+
+simulate_ns = Namespace(
+    "simulate", description="Quantum circuit simulation related operations."
+)
+logger = logging.getLogger(__name__)
+
+
+@simulate_ns.route("")
+class Simulate(Resource):
+    def post(self):  # type: ignore
+        """
+        Simulates trial unitary and returns truth table.
+        """
+        try:
+            unitary_info = request.get_json()
+            logger.info(f"Trying to simulate trial unitary: {unitary_info}")
+
+            logger.info("Processing unitary info into trial and target DTOs")
+            trial_dto = UnitaryDTO(
+                unitary_info["number_of_qubits"],
+                unitary_info["gates"],
+                unitary_info["qubit_order"],
+            )
+            target_dto = UnitaryDTO(
+                unitary_info["number_of_qubits"],
+                get_target_gates(unitary_info["target_unitary"]),
+                get_qubit_order(unitary_info["target_unitary"]),
+            )
+
+            response = simulate_unitaries(trial_dto, target_dto)
+            return response
+        except Exception as e:
+            return ResponseBuilder.error(
+                message=(
+                    f"Unexpected error occured when simulating circuit,"
+                    f" Unitary Info: {unitary_info}"
+                ),
+                data=ResponseDTO(error=str(e)),
+            )

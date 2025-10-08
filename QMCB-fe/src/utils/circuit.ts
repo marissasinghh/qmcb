@@ -1,14 +1,14 @@
 /**
+ * CIRCUIT UTILITIES:
  * Pure, immutable helpers for building the student’s circuit state.
- * - No React, no DOM, no fetch.
  * - Invariant: `column` is always re-numbered to 0..n-1 (gapless, sorted left→right).
  * - Serialization returns arrays in column order, matching backend expectations.
  */
 
 import type { PlacedGate, ControlTargetOrder, AnyQubitOrder } from "../types/global";
-import { isValidOrderFor } from "./quantum-gates";
-import { ToolboxGate } from "../types/global";
-import { DEFAULT_QUBIT_ORDER } from "../utils/constants";
+import { isValidOrderFor } from "../config/gates";
+import { Gate } from "../types/global";
+import { DEFAULT_QUBIT_ORDER } from "./constants";
 
 /** Return a new array sorted by column (ascending) */
 function sortByColumn(gates: PlacedGate[]) {
@@ -65,18 +65,18 @@ export function clear(): PlacedGate[] {
 }
 
 /** Column-ordered names for the API request body */
-export function serializeGateNames(gates: PlacedGate[]): ToolboxGate[] {
+export function serializeGateNames(gates: PlacedGate[]): Gate[] {
   return sortByColumn(gates).map((g) => g.type);
 }
 
 /** Column-ordered qubit orders for the API request body */
 export function serializeOrders(gates: PlacedGate[]): AnyQubitOrder[] {
   return sortByColumn(gates).map((g) => {
-    if (g.type === "CNOT") {
-      // g is PlacedCNOT here; already a readonly [0,1] | [1,0]
+    if ("order" in g) {
+      // 2-qubit gates have an order property
       return g.order;
     }
-    // g is PlacedSingle (H/T): encode wire as [wire, wire]
+    // Single-qubit gates: encode wire as [wire, wire]
     return [g.wire, g.wire] as const as AnyQubitOrder;
   });
 }

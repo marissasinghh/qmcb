@@ -3,7 +3,7 @@
  * The frontend only renders this; no simulation on FE.
  */
 
-import type { TruthTableDTO } from "./truth-table";
+import type { TruthTableDTO } from "./truthTable";
 
 export interface SimulationResponseDTO {
   message: string;

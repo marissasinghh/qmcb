@@ -1,10 +1,11 @@
 import cirq
+import math
 from app.utils.types import Operation, Qubit
 from app.utils.constants import Gate
 from typing import Optional
 
 
-class QuantumGateRepository:
+class CirqGateMapper:
 
     @staticmethod
     def apply(
@@ -15,7 +16,6 @@ class QuantumGateRepository:
         """
 
         # To handle cases where qubit order is not necessary
-        # (ex. gates that act on a single qubit):
         if qubit_order is None:
             qubit_order = list(range(len(qubits)))
 
@@ -38,10 +38,20 @@ class QuantumGateRepository:
         elif gate == Gate.T.value:
             return cirq.T(selected_qubits[0])
 
+        elif gate == Gate.RX.value:
+            return cirq.rx(math.pi / 2)(selected_qubits[0]) 
+
+        elif gate == Gate.RY.value:
+            return cirq.ry(math.pi / 2)(selected_qubits[0])
+
+        elif gate == Gate.U.value:
+            # Generic single-qubit gate (placeholder - needs parameters)
+            return cirq.H(selected_qubits[0])  # Temporary: just use H
+
         elif gate == Gate.CNOT.value:
             return cirq.CNOT(selected_qubits[0], selected_qubits[1])
 
-        elif gate == Gate.CZ.value:
+        elif gate == Gate.CONTROLLED_Z.value:
             return cirq.CZ(selected_qubits[0], selected_qubits[1])
 
         elif gate == Gate.SWAP.value:

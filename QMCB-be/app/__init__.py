@@ -1,7 +1,7 @@
 import logging
 from flask import Flask
 from flask_cors import CORS
-from app.config import Config
+from app.settings import Config
 
 
 logger = logging.getLogger(__name__)

@@ -1,11 +1,11 @@
 import cirq
-from app.repositories.quantum_gates import QuantumGateRepository
+from app.config.gates import CirqGateMapper
 from app.utils.helpers import index_to_letter
 from app.utils.types import Qubit, Circuit
 from app.utils.constants import Gate
 
 
-class ConstructCircuitRepository:
+class CircuitBuilder:
 
     @staticmethod
     def prepare_basis_state(basis_state: list[int], qubits: list[Qubit]) -> Circuit:
@@ -28,9 +28,7 @@ class ConstructCircuitRepository:
 
         for state, qubit in zip(basis_state, qubits):
             if state == 1:
-                operations.append(
-                    QuantumGateRepository.apply(Gate.X.value, None, qubit)
-                )
+                operations.append(CirqGateMapper.apply(Gate.X.value, None, qubit))
 
         return cirq.Circuit(operations)
 
@@ -44,17 +42,31 @@ class ConstructCircuitRepository:
         """
         operations = []
 
-        print("Qubit Order Check")  # DEBUG
-
         for i in range(len(gates)):
 
             print(f"Applying {gates[i]} for order {qubit_order[i]}")
-            operations.append(
-                QuantumGateRepository.apply(gates[i], qubit_order[i], *qubits)
-            )
+            operations.append(CirqGateMapper.apply(gates[i], qubit_order[i], *qubits))
 
         return cirq.Circuit(operations)
 
+    @staticmethod
+    def construct_unitary_circuit(
+        basis_state: list[int],
+        gates: list[str],
+        qubit_order: list[list[int]],
+        qubits: list[Qubit],
+    ) -> Circuit:
+        """
+        Prepares the basis state, applies the gate sequence, and returns a circuit.
+        """
+        circuit = CircuitBuilder.prepare_basis_state(basis_state, qubits)
+        print("Prepared basis state...")
+        circuit.append(CircuitBuilder.build_circuit_base(gates, qubit_order, qubits))
+        print("Built circuit base...")
+
+        return circuit
+
+    # Keeping measurement for future in case we want to implement a measurement feature
     @staticmethod
     def measure_qubits(qubits: list[Qubit]) -> Circuit:
         """
@@ -72,24 +84,3 @@ class ConstructCircuitRepository:
             operations.append(cirq.measure(qubits[i], key=key_letter))
 
         return cirq.Circuit(operations)
-
-    @staticmethod
-    def construct_unitary_circuit(
-        basis_state: list[int],
-        gates: list[str],
-        qubit_order: list[list[int]],
-        qubits: list[Qubit],
-    ) -> Circuit:
-        """
-        Combines the above methods for clean calling.
-        """
-        circuit = ConstructCircuitRepository.prepare_basis_state(basis_state, qubits)
-        print("Prepared basis state...")
-        circuit.append(
-            ConstructCircuitRepository.build_circuit_base(gates, qubit_order, qubits)
-        )
-        print("Built circuit base...")
-        circuit.append(ConstructCircuitRepository.measure_qubits(qubits))
-        print("Ready for measurement...")
-
-        return circuit

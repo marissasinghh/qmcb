@@ -4,12 +4,11 @@
  */
 
 import type { AnyQubitOrder } from "../types/global";
-import type { TargetUnitary } from "../utils/constants";
-import type { ToolboxGate } from "../types/global";
+import type { Gate } from "../types/global";
 
 export interface UnitaryRequestDTO {
-  target_unitary: TargetUnitary;
+  target_unitary: Gate;
   number_of_qubits: number;
-  gates: ToolboxGate[]; // "CNOT" | "H" | "T"
+  gates: Gate[]; // "CNOT" | "H" | "T"
   qubit_order: AnyQubitOrder[]; // now allows [0,0] / [1,1] too
 }

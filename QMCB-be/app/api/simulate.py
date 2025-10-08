@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 from flask import request
+from app.settings import Config
 from app.controllers.simulate import simulate_unitaries
-from app.utils.helpers import get_qubit_order, get_target_gates
 from app.utils.response_builder import ResponseBuilder
 from app.dto.response_dto import ResponseDTO
 from app.dto.unitary import UnitaryDTO
@@ -24,20 +24,23 @@ class Simulate(Resource):
             unitary_info = request.get_json()
             logger.info(f"Trying to simulate trial unitary: {unitary_info}")
 
+            if not unitary_info:
+                return ResponseBuilder.error("No JSON body provided", 400)
+
             logger.info("Processing unitary info into trial and target DTOs")
             trial_dto = UnitaryDTO(
                 unitary_info["number_of_qubits"],
                 unitary_info["gates"],
                 unitary_info["qubit_order"],
             )
-            target_dto = UnitaryDTO(
-                unitary_info["number_of_qubits"],
-                get_target_gates(unitary_info["target_unitary"]),
-                get_qubit_order(unitary_info["target_unitary"]),
+            target_name = unitary_info["target_unitary"]
+
+            response = simulate_unitaries(
+                trial_dto, target_name, Config.VALIDATE_TARGET_CIRCUITS
             )
 
-            response = simulate_unitaries(trial_dto, target_dto)
             return response
+
         except Exception as e:
             return ResponseBuilder.error(
                 message=(

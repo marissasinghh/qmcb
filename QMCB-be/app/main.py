@@ -1,7 +1,7 @@
 from app.api import api
 from app import create_app
-from app.config import Config
-from flask_cors import CORS  
+from app.settings import Config
+from flask_cors import CORS
 import logging
 
 logging.basicConfig(
@@ -14,7 +14,9 @@ app = create_app(config)
 # CORS: allow the Vite dev server origins
 CORS(
     app,
-    resources={r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}},
+    resources={
+        r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}
+    },
     supports_credentials=False,
     methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],

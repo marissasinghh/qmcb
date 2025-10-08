@@ -1,8 +1,9 @@
 import cirq
-from app.repositories.quantum_gates import QuantumGateRepository
-from app.repositories.target_library import TARGET_LIBRARY
-from app.utils.types import Qubit, Operation, Result
-from app.utils.constants import Gate, TargetLibraryField
+from app.config.gates import CirqGateMapper
+from app.config.target_library import TARGET_LIBRARY
+from app.utils.types import Qubit, Operation, Result, WavefunctionResult
+from app.utils.constants import Gate, TargetLibraryField, TWO_QUBIT_INPUTS
+from app.dto.truth_table import TruthTableDTO
 
 
 def initialize_qubit_sequence(number_of_qubits: int) -> list[Qubit]:
@@ -18,11 +19,19 @@ def initialize_qubit_sequence(number_of_qubits: int) -> list[Qubit]:
     return qubit_sequence
 
 
+def generate_basis_states(n_qubits: int) -> list[list[int]]:
+    """
+    Generates list of all possible basis states for a given number of qubits.
+    Example format: [[0, 0], [0, 1], [1, 0], [1, 1]]
+    """
+    return [list(map(int, format(i, f"0{n_qubits}b"))) for i in range(2**n_qubits)]
+
+
 def set_qubit_to_1(qubit: Qubit) -> Operation:
     """
     Prepares the |1> basis state for a qubit.
     """
-    return QuantumGateRepository.apply(Gate.X.value, None, qubit)
+    return CirqGateMapper.apply(Gate.X.value, None, qubit)
 
 
 def get_target_gates(target_name: str) -> list[str]:
@@ -32,8 +41,10 @@ def get_target_gates(target_name: str) -> list[str]:
     if target_name not in TARGET_LIBRARY:
         raise ValueError(f"Target gate {target_name} not found in library.")
 
-    target_key = TARGET_LIBRARY[target_name]
-    gate_list = target_key[TargetLibraryField.GATES.value]
+    target_info = TARGET_LIBRARY[target_name]
+    steps = target_info[TargetLibraryField.STEPS.value] 
+    
+    gate_list = [step[TargetLibraryField.GATE.value] for step in steps]
 
     return gate_list
 
@@ -45,8 +56,10 @@ def get_qubit_order(target_name: str) -> list[list[int]]:
     if target_name not in TARGET_LIBRARY:
         raise ValueError(f"Target gate {target_name} not found in library.")
 
-    info = TARGET_LIBRARY[target_name]
-    qubit_order = info[TargetLibraryField.QUBIT_ORDER.value]
+    target_info = TARGET_LIBRARY[target_name]
+    steps = target_info[TargetLibraryField.STEPS.value] 
+    
+    qubit_order = [step[TargetLibraryField.ORDER.value] for step in steps]
 
     return qubit_order
 
@@ -67,6 +80,50 @@ def list_to_joint_string(arbitrary_list: list[int]) -> str:
     return "".join(str(i) for i in arbitrary_list)
 
 
+def format_ket(bits: list[int]) -> str:
+    """
+    Takes list of bits in the form [0, 0] and returns a string of
+    the corresponding basis ket.
+    """
+    return "|" + list_to_joint_string(bits) + ">"
+
+
+def extract_wavefunction(number_of_qubits: int, result: WavefunctionResult) -> str:
+    """
+    Extracts the wavefunction from the state vector and returns it as a
+    linear combination of basis states with amplitudes and phases.
+    """
+    output_bits = []
+
+    for i in range(number_of_qubits):
+        key = chr(ord("a") + i)  # Assumes keys are 'a', 'b', ...
+        bit = result.final_state_vector[key][0][0]
+        output_bits.append(str(bit))
+
+    return "".join(output_bits)
+
+
+def build_target_truth_table(
+    target_name: str, target_truth_table: TruthTableDTO
+) -> None:
+    """
+    Builds the truth table for a target circuit using stored expected output values.
+    """
+    if target_name not in TARGET_LIBRARY:
+        raise ValueError(f"Target '{target_name}' not found in TARGET_LIBRARY")
+
+    target_info = TARGET_LIBRARY[target_name]
+    inputs = TWO_QUBIT_INPUTS
+    outputs = target_info[TargetLibraryField.EXPECTED_OUTPUTS.value]
+
+    for inp, out in zip(inputs, outputs):
+        target_truth_table.input.append(inp)
+        target_truth_table.output.append(out)
+
+    return None
+
+
+# Might not need this anymore but keeping for now
 def extract_results(number_of_qubits: int, result: Result) -> str:
     """
     Extracts the measurement results for each qubit and returns them

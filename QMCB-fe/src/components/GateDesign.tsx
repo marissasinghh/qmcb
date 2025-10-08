@@ -92,14 +92,22 @@ export function HGlyph(props: { width?: number; height?: number }) {
   return <GateBlock label="H" {...props} />;
 }
 
-export function RZGlyph({
-  theta = "θ",
-  width,
-  height,
-}: {
-  theta?: string;
-  width?: number;
-  height?: number;
-}) {
-  return <GateBlock label={`Rz(${theta})`} width={width} height={height} />;
+export function TGlyph(props: { width?: number; height?: number }) {
+  return <GateBlock label="T" {...props} />;
+}
+
+export function SGlyph(props: { width?: number; height?: number }) {
+  return <GateBlock label="S" {...props} />;
+}
+
+export function RXGlyph(props: { width?: number; height?: number }) {
+  return <GateBlock label="Rx(θ)" {...props} />;
+}
+
+export function RYGlyph(props: { width?: number; height?: number }) {
+  return <GateBlock label="Ry(θ)" {...props} />;
+}
+
+export function UGlyph(props: { width?: number; height?: number }) {
+  return <GateBlock label="U" {...props} />;
 }

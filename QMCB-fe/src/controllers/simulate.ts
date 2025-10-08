@@ -6,10 +6,10 @@
  */
 
 import type { PlacedGate } from "../types/global";
-import type { UnitaryRequestDTO } from "../dto/unitary";
-import type { SimulationResponseDTO } from "../dto/response-dto";
-import type { LevelDefinition } from "../dto/level-definition";
-import { serializeGateNames, serializeOrders } from "../repositories/circuit-repo";
+import type { UnitaryRequestDTO } from "../interfaces/unitary";
+import type { SimulationResponseDTO } from "../interfaces/responseDTO";
+import type { LevelDefinition } from "../interfaces/levelDefinition";
+import { serializeGateNames, serializeOrders } from "../utils/circuit";
 
 /** Build the POST body from the level's static info + student's gates. */
 export function buildRequestFromLevel(

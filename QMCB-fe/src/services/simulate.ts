@@ -3,7 +3,7 @@
  * This module does not build DTOs; it just performs the network call.
  */
 
-import type { UnitaryRequestDTO } from "../dto/unitary";
+import type { UnitaryRequestDTO } from "../interfaces/unitary";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 

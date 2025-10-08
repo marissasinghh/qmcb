@@ -1,20 +1,45 @@
 from enum import Enum
 
 
+class Basis(Enum):
+    STATE_00 = "00"
+    STATE_01 = "01"
+    STATE_10 = "10"
+    STATE_11 = "11"
+
+
+LEVEL2_QUBITS = 2
+TWO_QUBIT_INPUTS = [
+    Basis.STATE_00.value,
+    Basis.STATE_01.value,
+    Basis.STATE_10.value,
+    Basis.STATE_11.value,
+]
+
+LEVEL3_QUBITS = 3
+THREE_QUBIT_INPUTS = ["000", "001", "010", "011", "100", "101", "110", "111"]
+
+
 class Gate(Enum):
     X = "X"
     H = "H"
     S = "S"
     T = "T"
+    RX = "RX"
+    RY = "RY"
+    U = "U"
     CNOT = "CNOT"
-    CZ = "CZ"
+    CNOT_FLIPPED = "CNOT_FLIPPED"
+    CONTROLLED_Z = "CONTROLLED_Z"
     SWAP = "SWAP"
 
 
 class TargetLibraryField(Enum):
     NUM_QUBITS = "num_qubits"
-    GATES = "gates"
-    QUBIT_ORDER = "qubit_order"
+    STEPS = "steps"
+    GATE = "gate"
+    ORDER = "order"
+    EXPECTED_OUTPUTS = "expected_outputs"
 
 
 class HttpStatus(Enum):

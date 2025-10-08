@@ -5,11 +5,12 @@
 
 import { useState, useCallback } from "react";
 import {
-  ToolboxGate,
   type PlacedGate,
-  type PlacedCNOT,
-  type PlacedSingle,
+  type PlacedSingleQubitGate,
+  type PlacedTwoQubitGate,
   type ControlTargetOrder,
+  type SingleQubitGate,
+  TwoQubitGate,
 } from "../types/global";
 import { DEFAULT_QUBIT_ORDER } from "../utils/constants";
 
@@ -17,20 +18,22 @@ export function useCircuit() {
   /** Current circuit, as an ordered list of placed gate chips. */
   const [gates, setGates] = useState<PlacedGate[]>([]);
 
-  /** Add a CNOT with default order at the end of the sequence. */
-  const addCNOT = useCallback(() => {
-    const g: PlacedCNOT = {
-      id: crypto.randomUUID(),
-      type: ToolboxGate.CNOT,
-      order: DEFAULT_QUBIT_ORDER,
-      column: gates.length,
-    };
-    setGates((prev) => [...prev, g]);
-  }, [gates.length]);
+  const addTwoQubitGate = useCallback(
+    (gate: TwoQubitGate) => {
+      const g: PlacedTwoQubitGate = {
+        id: crypto.randomUUID(),
+        type: gate,
+        order: DEFAULT_QUBIT_ORDER,
+        column: gates.length,
+      };
+      setGates((prev) => [...prev, g]);
+    },
+    [gates.length]
+  );
 
-  const addSingle = useCallback(
-    (type: ToolboxGate.H | ToolboxGate.T, wire: 0 | 1) => {
-      const g: PlacedSingle = {
+  const addSingleQubitGate = useCallback(
+    (type: SingleQubitGate, wire: 0 | 1) => {
+      const g: PlacedSingleQubitGate = {
         id: crypto.randomUUID(),
         type,
         wire,
@@ -42,9 +45,7 @@ export function useCircuit() {
   );
 
   const setGateOrder = useCallback((id: string, order: ControlTargetOrder) => {
-    setGates((prev) =>
-      prev.map((g) => (g.id === id && g.type === ToolboxGate.CNOT ? { ...g, order } : g))
-    );
+    setGates((prev) => prev.map((g) => (g.id === id && "order" in g ? { ...g, order } : g)));
   }, []);
 
   /** Remove a chip by id. */
@@ -55,5 +56,5 @@ export function useCircuit() {
   /** Clear the circuit. */
   const clearAll = useCallback(() => setGates([]), []);
 
-  return { gates, addCNOT, addSingle, setGateOrder, removeGate, clearAll };
+  return { gates, addTwoQubitGate, addSingleQubitGate, setGateOrder, removeGate, clearAll };
 }

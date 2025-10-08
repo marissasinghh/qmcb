@@ -20,3 +20,9 @@ class Config:
 
     # MongoDB URI – not currently used
     MONGO_URI = getenv("MONGO_URI", "")
+
+    # Optional: Validate target circuits by computing them
+    # Set to False in development for faster iteration
+    VALIDATE_TARGET_CIRCUITS = (
+        getenv("VALIDATE_TARGET_CIRCUITS", "true").lower() == "true"
+    )

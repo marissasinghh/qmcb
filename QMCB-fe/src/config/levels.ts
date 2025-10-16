@@ -27,7 +27,7 @@ import type { LevelDefinition } from "../interfaces/levelDefinition";
 export const CNOT_FLIPPED_LEVEL: LevelDefinition = {
   target_unitary: Gate.CNOT_FLIPPED,
   number_of_qubits: LEVEL2_QUBITS,
-  toolbox: [...SINGLE_QUBIT_GATES] as const,
+  toolbox: [...SINGLE_QUBIT_GATES, Gate.CNOT] as const,
 
   canonical: [
     { gate: Gate.H, order: Q0 },
@@ -95,13 +95,20 @@ export const SWAP_LEVEL: LevelDefinition = {
   description: "Build a SWAP gate from CNOTs. SWAP maps |a,b⟩ → |b,a⟩.",
 } as const;
 
-//---------------------------------------------------------------------------------------
-/** Registry of all available levels */
-export const LEVELS = {
-  CNOT_FLIPPED: CNOT_FLIPPED_LEVEL,
-  CONTROLLED_Z: CONTROLLED_Z_LEVEL,
-  SWAP: SWAP_LEVEL,
-} as const;
 
-/** Union of level ids */
-export type LevelId = keyof typeof LEVELS;
+//---------------------------------------------------------------------------------------
+/** Ordered list of levels for progression */
+export const LEVEL_ORDER: readonly LevelDefinition[] = [
+  CNOT_FLIPPED_LEVEL,
+  CONTROLLED_Z_LEVEL,
+  SWAP_LEVEL,
+] as const;
+
+/** Get the next level in the progression, or null if on the last level */
+export function getNextLevel(currentLevel: LevelDefinition): LevelDefinition | null {
+  const currentIndex = LEVEL_ORDER.findIndex((level) => level === currentLevel);
+  if (currentIndex === -1 || currentIndex === LEVEL_ORDER.length - 1) {
+    return null;
+  }
+  return LEVEL_ORDER[currentIndex + 1];
+}

@@ -3,7 +3,7 @@
  */
 
 import { Gate } from "../types/global";
-import { CNOTGlyph, HGlyph, TGlyph, SGlyph, RXGlyph, RYGlyph, UGlyph } from "./GateDesign";
+import { CNOTGlyph, ControlledZGlyph, HGlyph, TGlyph, SGlyph, RXGlyph, RYGlyph, UGlyph } from "./GateDesign";
 import { DraggableTool } from "./DragAndDropWrappers";
 
 interface ToolboxProps {
@@ -24,7 +24,7 @@ const GATE_CONFIG = {
     toolId: "tool-cnot-flipped",
   },
   [Gate.CONTROLLED_Z]: {
-    component: <CNOTGlyph order={[0, 1]} width={84} height={64} />,
+    component: <ControlledZGlyph order={[0, 1]} width={84} height={64} />,
     label: "CZ",
     toolId: "tool-cz",
   },

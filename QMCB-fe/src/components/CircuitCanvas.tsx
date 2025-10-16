@@ -3,7 +3,7 @@
  */
 
 import { Gate, type PlacedGate, type ControlTargetOrder } from "../types/global";
-import { CNOTGlyph, HGlyph, TGlyph, SGlyph, RXGlyph, RYGlyph, UGlyph } from "./GateDesign";
+import { CNOTGlyph, ControlledZGlyph, HGlyph, TGlyph, SGlyph, RXGlyph, RYGlyph, UGlyph } from "./GateDesign";
 import { DroppableStrip } from "./DragAndDropWrappers";
 import { allowedOrdersFor } from "../config/gates";
 
@@ -31,7 +31,7 @@ export function CircuitCanvas({
   const COL_W = 90;
   const PAD_X = 100;
   const CANVAS_W = Math.max(600, PAD_X * 2 + Math.max(1, gates.length) * COL_W);
-  const CANVAS_H = 220;
+  const CANVAS_H = 250;
   const yA = 80;
   const yB = 160;
   const CNOT_W = 80;
@@ -68,9 +68,15 @@ export function CircuitCanvas({
 
             // Handle all 2-qubit gates
             if (TWO_QUBIT_GATES.has(g.type) && "order" in g) {
+              // Choose the right glyph based on gate type
+              let GlyphComponent = CNOTGlyph;
+              if (g.type === Gate.CONTROLLED_Z) {
+                GlyphComponent = ControlledZGlyph;
+              }
+              
               return (
                 <g key={g.id} transform={`translate(${xCenter - CNOT_W / 2}, ${yA - 12})`}>
-                  <CNOTGlyph order={g.order} width={CNOT_W} height={CNOT_H} />
+                  <GlyphComponent order={g.order} width={CNOT_W} height={CNOT_H} />
                 </g>
               );
             }

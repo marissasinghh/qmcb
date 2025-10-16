@@ -2,7 +2,7 @@
  * App header: contains navigation links.
  */
 
-import { LEVELS, type LevelId } from "../config/levels";
+import { LEVEL_ORDER } from "../config/levels";
 import type { LevelDefinition } from "../interfaces/levelDefinition";
 
 interface AppHeaderProps {
@@ -26,13 +26,16 @@ export function AppHeader({ currentLevel, onLevelChange }: AppHeaderProps) {
             className="border rounded px-2 py-1 text-sm"
             value={currentLevel.target_unitary}
             onChange={(e) => {
-              const levelId = e.target.value as LevelId;
-              onLevelChange(LEVELS[levelId]);
+              const selectedGate = e.target.value;
+              const selectedLevel = LEVEL_ORDER.find((level) => level.target_unitary === selectedGate);
+              if (selectedLevel) {
+                onLevelChange(selectedLevel);
+              }
             }}
           >
-            {Object.entries(LEVELS).map(([id, level]) => (
-              <option key={id} value={level.target_unitary}>
-                {id}
+            {LEVEL_ORDER.map((level) => (
+              <option key={level.target_unitary} value={level.target_unitary}>
+                {level.target_unitary}
               </option>
             ))}
           </select>
